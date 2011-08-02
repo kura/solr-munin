@@ -8,13 +8,13 @@ echo "install lxml"
 apt-get --assume-yes --quiet install python-lxml
 echo "done"
 echo "chmod"
-chmod +x solr_*
+chmod +x plugins/solr_*
 echo "done"
 echo "chown"
-chown root:root solr_*
+chown root:root plugins/solr_*
 echo "done"
 echo "move"
-mv solr_* /usr/share/munin/plugins/
+mv plugins/solr_* /usr/share/munin/plugins/
 echo "done"
 echo "symlink"
 ln -s /usr/share/munin/plugins/solr_docs /etc/munin/plugins/solr_docs
