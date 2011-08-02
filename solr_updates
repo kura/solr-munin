@@ -1,0 +1,58 @@
+#!/usr/bin/python
+# Copyright (c) 2011
+# Distilled Media Ltd.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+# 3. Neither the name of the author nor the names of any contributors to the
+#    software may be used to endorse or promote products derived from this
+#    software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+#
+# Monitors updates being passed to the /update query handler
+#
+
+import httplib, sys
+from lxml import etree
+
+if sys.argv[-1] == 'config':
+	print "graph_title Solr Updates"
+	print "graph_args -l 0"
+	print "graph_vlabel ups"
+	print "graph_category search"
+	print "ups.label Updates per second"
+else:
+	conn = httplib.HTTPConnection("localhost:8080")
+	conn.request("GET", "/solr/admin/stats.jsp")
+	res = conn.getresponse()
+
+	if res.status == 200:
+		data = res.read()
+
+		root = etree.fromstring(data)
+		core = root.xpath('/solr/solr-info/QUERYHANDLER')
+
+		for entry in core[0].xpath('entry'):
+			if entry[0].text.strip() == '/update':
+				stats = entry.xpath('stats')
+				for stat in stats[0]:
+					if stat.get("name") == 'avgRequestsPerSecond':
+						print "ups.value", stat.text.strip()
