@@ -28,4 +28,26 @@ echo "done"
 echo "restart munin-node"
 /etc/init.d/munin-node restart
 echo "done"
+echo "/etc/munin/plugins/solr_docs"
+/etc/munin/plugins/solr_docs
+echo
+echo "/etc/munin/plugins/solr_documentcache"
+/etc/munin/plugins/solr_documentcache
+echo
+echo "/etc/munin/plugins/solr_filtercache"
+/etc/munin/plugins/solr_filtercache
+echo
+echo "/etc/munin/plugins/solr_qps"
+/etc/munin/plugins/solr_qps
+echo
+echo "/etc/munin/plugins/solr_querycache"
+/etc/munin/plugins/solr_querycache
+echo
+echo "/etc/munin/plugins/solr_querytime"
+/etc/munin/plugins/solr_querytime
+echo
+echo "/etc/munin/plugins/solr_updates"
+/etc/munin/plugins/solr_updates
+echo
+echo "it works!"
 exit 0
